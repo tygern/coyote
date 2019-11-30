@@ -19,7 +19,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-    testImplementation("junit:junit:4.12")
 }
 
 tasks {

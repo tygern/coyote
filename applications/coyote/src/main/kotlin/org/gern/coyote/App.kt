@@ -12,6 +12,8 @@ import io.ktor.locations.Locations
 import io.ktor.routing.Routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.jetty.Jetty
+import org.gern.coyote.expenses.ExpenseRepository
+import org.gern.coyote.expenses.expenses
 
 @KtorExperimentalLocationsAPI
 fun Application.module() {
@@ -24,8 +26,11 @@ fun Application.module() {
         }
     }
 
+    val expenseRepository = ExpenseRepository()
+
     install(Routing) {
         index()
+        expenses(expenseRepository)
     }
 }
 

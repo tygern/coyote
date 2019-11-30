@@ -21,6 +21,7 @@ subprojects kotlinConfig@{
 
     dependencies {
         "implementation"(kotlin("stdlib-jdk8"))
+        "testImplementation"(kotlin("test-junit"))
     }
 
     configure<JavaPluginExtension> {
