@@ -1,50 +1,36 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.61"
-    application
+    kotlin("jvm") version "1.3.61" apply false
 }
 
-repositories {
-    jcenter()
-}
+subprojects kotlinConfig@{
+    if (name == "applications" || name == "components") return@kotlinConfig
 
-val mainClass = "org.gern.coyote.AppKt"
-
-application {
-    mainClassName = mainClass
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    extra.apply {
+        set("ktorVersion", "1.2.6")
     }
-}
 
-dependencies {
-    compile(kotlin("stdlib-jdk8"))
-    compile(ktor("ktor-server-jetty"))
-    compile(ktor("ktor-locations"))
-    compile("ch.qos.logback:logback-classic:1.2.3")
-}
+    group = "org.gern.coyote"
 
-tasks {
-    jar {
-        manifest {
-            attributes("Main-Class" to mainClass)
+    apply(plugin = "kotlin")
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        "implementation"(kotlin("stdlib-jdk8"))
+    }
+
+    configure<JavaPluginExtension> {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
-        from({
-            val compileConfig = configurations.compile.get()
-            compileConfig.map { file ->
-                { if (file.isDirectory) file else zipTree(file) }
-            }
-        })
     }
 }
-
-fun ktor(name: String) = "io.ktor:$name:1.2.6"

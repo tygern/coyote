@@ -4,7 +4,7 @@ import io.ktor.application.call
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Location
 import io.ktor.locations.get
-import io.ktor.response.respondText
+import io.ktor.response.respond
 import io.ktor.routing.Route
 
 @KtorExperimentalLocationsAPI
@@ -14,6 +14,6 @@ class IndexPath
 @KtorExperimentalLocationsAPI
 fun Route.index() {
     get<IndexPath> {
-        call.respondText("Hello world")
+        call.respond(mapOf("application" to "coyote"))
     }
 }
