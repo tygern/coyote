@@ -5,7 +5,7 @@ plugins {
 }
 
 subprojects kotlinConfig@{
-    if (name == "applications" || name == "components") return@kotlinConfig
+    if (isNotKotlinProject()) return@kotlinConfig
 
     extra.apply {
         set("ktorVersion", "1.2.6")
@@ -35,3 +35,5 @@ subprojects kotlinConfig@{
         }
     }
 }
+
+fun Project.isNotKotlinProject() = name == "applications" || name == "components" || name == "databases"
