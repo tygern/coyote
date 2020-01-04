@@ -7,7 +7,7 @@ data class ExpenseInfo(
         val currency: String
 ) {
     constructor(expense: Expense) : this(
-        id = expense.id,
+        id = expense.id.toString(),
         instant = expense.instant.epochSecond,
         amount = expense.amount.toDouble(),
         currency = expense.currency.currencyCode

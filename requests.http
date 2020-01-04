@@ -11,6 +11,16 @@ Content-Type: application/json
   "currency": "EUR",
   "instant": 1575132000
 }
+###
+
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "amount": 87435,
+  "currency": "JPY",
+  "instant": 1575139999
+}
 
 ###
 

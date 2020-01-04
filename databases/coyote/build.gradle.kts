@@ -1,8 +1,10 @@
 val mainClass = "org.gern.coyotedatabase.MigrateKt"
 
+val mariaDbVersion : String by extra
+
 dependencies {
     implementation("org.flywaydb:flyway-core:6.1.0")
-    implementation("org.mariadb.jdbc:mariadb-java-client:2.5.2")
+    implementation("org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion")
 }
 
 tasks.register<JavaExec>("devMigrate") {

@@ -13,6 +13,7 @@ import io.ktor.routing.Routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.jetty.Jetty
 import org.gern.coyote.expenses.ExpenseRepository
+import org.gern.coyote.expenses.ExpenseService
 import org.gern.coyote.expenses.expenses
 
 @KtorExperimentalLocationsAPI
@@ -26,11 +27,15 @@ fun Application.module() {
         }
     }
 
-    val expenseRepository = ExpenseRepository()
+    val jdbcUrl = requireNotNull(System.getenv("JDBC_URL"), {"Error finding JDBC_URL"})
+
+    val db = DatabaseConfiguration(jdbcUrl).db
+    val expenseRepository = ExpenseRepository(db)
+    val expenseService = ExpenseService(expenseRepository)
 
     install(Routing) {
         index()
-        expenses(expenseRepository)
+        expenses(expenseService)
     }
 }
 

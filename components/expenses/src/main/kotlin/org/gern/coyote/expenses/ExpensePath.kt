@@ -18,15 +18,15 @@ import java.util.*
 data class ExpensePath(val currency: String? = null, val amount: Double? = null, val instant: Long? = null)
 
 @KtorExperimentalLocationsAPI
-fun Route.expenses(repo: ExpenseRepository) {
+fun Route.expenses(service: ExpenseService) {
     get<ExpensePath> {
-        call.respond(repo.list().map(::ExpenseInfo))
+        call.respond(service.list().map(::ExpenseInfo))
     }
 
     post<ExpensePath> {
         val body = call.receive<ExpensePath>()
 
-        val expense = repo.create(
+        val expense = service.create(
             amount = BigDecimal.valueOf(body.amount!!),
             currency = Currency.getInstance(body.currency!!),
             instant = Instant.ofEpochSecond(body.instant!!)

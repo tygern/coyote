@@ -9,6 +9,8 @@ subprojects kotlinConfig@{
 
     extra.apply {
         set("ktorVersion", "1.2.6")
+        set("mariaDbVersion", "2.5.2")
+        set("exposedVersion", "0.20.2")
     }
 
     group = "org.gern.coyote"
@@ -22,6 +24,7 @@ subprojects kotlinConfig@{
     dependencies {
         "implementation"(kotlin("stdlib-jdk8"))
         "testImplementation"(kotlin("test-junit"))
+        "testImplementation"("io.mockk:mockk:1.9")
     }
 
     configure<JavaPluginExtension> {

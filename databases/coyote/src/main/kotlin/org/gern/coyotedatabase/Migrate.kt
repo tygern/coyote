@@ -5,7 +5,7 @@ import org.mariadb.jdbc.MariaDbDataSource
 
 
 fun main() {
-    val jdbcUrl = requireNotNull(System.getenv("JDBC_URL"), {"Error finding database credentials"})
+    val jdbcUrl = requireNotNull(System.getenv("JDBC_URL"), {"Error finding JDBC_URL"})
 
     Flyway.configure()
         .dataSource(MariaDbDataSource(jdbcUrl))
