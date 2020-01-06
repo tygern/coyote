@@ -1,3 +1,5 @@
+import org.gradle.api.file.DuplicatesStrategy.INCLUDE
+
 plugins {
     application
 }
@@ -44,6 +46,8 @@ tasks {
         manifest {
             attributes("Main-Class" to mainClass)
         }
+
+        duplicatesStrategy = INCLUDE
 
         from({
             configurations.compileClasspath.get()
