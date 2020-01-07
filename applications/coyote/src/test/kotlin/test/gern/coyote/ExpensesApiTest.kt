@@ -58,6 +58,15 @@ class ExpensesApiTest {
     }
 
     @Test
+    fun testAddExpenseMissingInfo() = testApp {
+        postRequest("/expenses", mapOf(
+            "amount" to 43.67
+        )).apply {
+            assertEquals(400, response.status()?.value)
+        }
+    }
+
+    @Test
     fun testListExpense() = testApp {
         postRequest("/expenses", expenseData)
             .apply { assertEquals(201, response.status()?.value) }

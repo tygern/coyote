@@ -15,7 +15,20 @@ import java.util.*
 
 @KtorExperimentalLocationsAPI
 @Location("/expenses")
-data class ExpensePath(val currency: String? = null, val amount: Double? = null, val instant: Long? = null)
+data class ExpensePath(val currency: String? = null, val amount: Double? = null, val instant: Long? = null) {
+    val valid = amount != null
+        && instant != null
+        && validCurrencyCode()
+
+    private fun validCurrencyCode() = try {
+        Currency.getInstance(currency)
+        true
+    } catch (e: NullPointerException) {
+        false
+    } catch (e: IllegalArgumentException) {
+        false
+    }
+}
 
 @KtorExperimentalLocationsAPI
 fun Route.expenses(service: ExpenseService) {
@@ -24,14 +37,18 @@ fun Route.expenses(service: ExpenseService) {
     }
 
     post<ExpensePath> {
-        val body = call.receive<ExpensePath>()
+        val requestBody = call.receive<ExpensePath>()
 
-        val expense = service.create(
-            amount = BigDecimal.valueOf(body.amount!!),
-            currency = Currency.getInstance(body.currency!!),
-            instant = Instant.ofEpochSecond(body.instant!!)
-        )
+        if (requestBody.valid) {
+            val expense = service.create(
+                amount = BigDecimal.valueOf(requestBody.amount!!),
+                currency = Currency.getInstance(requestBody.currency!!),
+                instant = Instant.ofEpochSecond(requestBody.instant!!)
+            )
 
-        call.respond(HttpStatusCode.Created, ExpenseInfo(expense))
+            call.respond(HttpStatusCode.Created, ExpenseInfo(expense))
+        } else {
+            call.respond(HttpStatusCode.BadRequest)
+        }
     }
 }
