@@ -28,6 +28,11 @@ class ExpenseService(private val repo: ExpenseRepository) {
         .map(this::expenseFromRecord)
         .toSet()
 
+    fun delete(id: String) = try {
+        repo.delete(UUID.fromString(id))
+    } catch (e: IllegalArgumentException) {
+    }
+
     private fun expenseFromRecord(record: ExpenseRecord): Expense {
         val currency = Currency.getInstance(record.currencyCode)
 

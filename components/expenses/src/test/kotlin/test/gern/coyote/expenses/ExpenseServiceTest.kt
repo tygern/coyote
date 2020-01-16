@@ -1,9 +1,6 @@
 package test.gern.coyote.expenses
 
-import io.mockk.clearAllMocks
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.gern.coyote.expenses.Expense
 import org.gern.coyote.expenses.ExpenseRecord
 import org.gern.coyote.expenses.ExpenseRepository
@@ -94,6 +91,22 @@ class ExpenseServiceTest {
     @Test
     fun testFindBadUUID() {
         assertNull(service.find("potato"))
+    }
+
+    @Test
+    fun testDelete() {
+        every { repo.delete(any()) } just Runs
+
+        service.delete("ce5cf31d-c466-4ad6-b765-711e0750d2c9")
+
+        verify {
+            repo.delete(UUID.fromString("ce5cf31d-c466-4ad6-b765-711e0750d2c9"))
+        }
+    }
+
+    @Test
+    fun testDeleteBadUUID() {
+        service.delete("potato")
     }
 
     @Test

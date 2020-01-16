@@ -37,6 +37,10 @@ class ExpenseRepository(private val db: Database) {
             .toSet()
     }
 
+    fun delete(id: UUID): Unit = transaction(db) {
+        ExpensesTable.deleteWhere { ExpensesTable.id eq id }
+    }
+
     private fun rowToExpenseRecord(it: ResultRow): ExpenseRecord {
         return ExpenseRecord(
             id = it[ExpensesTable.id].value,

@@ -93,6 +93,19 @@ class ExpensesApiTest {
     }
 
     @Test
+    fun testDeleteExpense() = testApp {
+        val id = createExpense()
+
+        handleRequest(HttpMethod.Delete, "/expenses/${id}").apply {
+            assertEquals(HttpStatusCode.NoContent.value, response.status()?.value)
+        }
+
+        handleRequest(HttpMethod.Get, "/expenses/${id}").apply {
+            assertEquals(HttpStatusCode.NotFound.value, response.status()?.value)
+        }
+    }
+
+    @Test
     fun testListExpense() = testApp {
         postRequest("/expenses", expenseData)
             .apply { assertEquals(201, response.status()?.value) }

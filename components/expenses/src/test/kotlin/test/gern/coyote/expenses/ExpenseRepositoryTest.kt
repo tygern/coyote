@@ -134,4 +134,23 @@ class ExpenseRepositoryTest {
             result
         )
     }
+
+    @Test
+    fun testDelete() {
+        val recordToDelete = repo.create(
+            amount = BigInteger.valueOf(3456L),
+            currencyCode = "EUR",
+            instant = Instant.ofEpochSecond(1575132999L)
+        )
+
+        val recordToKeep = repo.create(
+            amount = BigInteger.valueOf(3456L),
+            currencyCode = "EUR",
+            instant = Instant.ofEpochSecond(1575132999L)
+        )
+
+        repo.delete(recordToDelete.id)
+
+        assertEquals(listOf(recordToKeep.id), repo.list().map(ExpenseRecord::id))
+    }
 }

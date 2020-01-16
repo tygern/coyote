@@ -2,10 +2,7 @@ package org.gern.coyote.expenses
 
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.locations.KtorExperimentalLocationsAPI
-import io.ktor.locations.Location
-import io.ktor.locations.get
-import io.ktor.locations.post
+import io.ktor.locations.*
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -61,5 +58,11 @@ fun Route.expenses(service: ExpenseService) {
         } else {
             call.respond(HttpStatusCode.BadRequest)
         }
+    }
+
+    delete<SingleExpensePath> {
+        service.delete(it.id)
+
+        call.respond(HttpStatusCode.NoContent)
     }
 }
