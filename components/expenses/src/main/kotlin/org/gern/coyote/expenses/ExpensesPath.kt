@@ -15,7 +15,7 @@ import java.util.*
 
 @KtorExperimentalLocationsAPI
 @Location("/expenses")
-data class ExpensePath(val currency: String? = null, val amount: Double? = null, val instant: Long? = null) {
+data class ExpensesPath(val currency: String? = null, val amount: Double? = null, val instant: Long? = null) {
     val valid = amount != null
         && instant != null
         && validCurrencyCode()
@@ -31,13 +31,24 @@ data class ExpensePath(val currency: String? = null, val amount: Double? = null,
 }
 
 @KtorExperimentalLocationsAPI
+@Location("/expenses/{id}")
+data class SingleExpensePath(val id: String)
+
+@KtorExperimentalLocationsAPI
 fun Route.expenses(service: ExpenseService) {
-    get<ExpensePath> {
+    get<ExpensesPath> {
         call.respond(service.list().map(::ExpenseInfo))
     }
 
-    post<ExpensePath> {
-        val requestBody = call.receive<ExpensePath>()
+    get<SingleExpensePath> {
+        when (val expense = service.find(it.id)) {
+            null -> call.respond(HttpStatusCode.NotFound)
+            else -> call.respond(ExpenseInfo(expense))
+        }
+    }
+
+    post<ExpensesPath> {
+        val requestBody = call.receive<ExpensesPath>()
 
         if (requestBody.valid) {
             val expense = service.create(

@@ -12,6 +12,7 @@ import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ExpenseRepositoryTest {
     private val jdbcUrl = requireNotNull(System.getenv("JDBC_URL"), { "Error finding JDBC_URL" })
@@ -83,6 +84,32 @@ class ExpenseRepositoryTest {
             ),
             record
         )
+    }
+
+    @Test
+    fun testFind() {
+        val record = repo.create(
+            amount = BigInteger.valueOf(3456L),
+            currencyCode = "EUR",
+            instant = Instant.ofEpochSecond(1575132999L)
+        )
+
+        val result = repo.find(record.id)
+
+        assertEquals(
+            ExpenseRecord(
+                id = record.id,
+                amount = BigInteger.valueOf(3456L),
+                currencyCode = "EUR",
+                instant = Instant.ofEpochSecond(1575132999L)
+            ),
+            result
+        )
+    }
+
+    @Test
+    fun testFindNotThere() {
+        assertNull(repo.find(UUID.randomUUID()))
     }
 
     @Test

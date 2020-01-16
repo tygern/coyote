@@ -1,7 +1,6 @@
 package org.gern.coyote.expenses
 
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.Instant
 import java.util.*
 
@@ -15,24 +14,30 @@ class ExpenseService(private val repo: ExpenseRepository) {
             instant = instant
         )
 
-        return Expense(
-            id = record.id,
-            amount = amount.setScale(currency.defaultFractionDigits, RoundingMode.HALF_UP),
-            currency = currency,
-            instant = instant
-        )
+        return expenseFromRecord(record)
     }
 
-    fun list(): Set<Expense> = repo.list().map {
-        val currency = Currency.getInstance(it.currencyCode)
+    fun find(id: String): Expense? = try {
+        repo.find(UUID.fromString(id))
+            ?.let { expenseFromRecord(it) }
+    } catch (e: IllegalArgumentException) {
+        null
+    }
 
-        Expense(
-            id = it.id,
-            amount = it.amount.toBigDecimal().divide(offsetFactor(currency)),
+    fun list(): Set<Expense> = repo.list()
+        .map(this::expenseFromRecord)
+        .toSet()
+
+    private fun expenseFromRecord(record: ExpenseRecord): Expense {
+        val currency = Currency.getInstance(record.currencyCode)
+
+        return Expense(
+            id = record.id,
+            amount = record.amount.toBigDecimal().divide(offsetFactor(currency)),
             currency = currency,
-            instant = it.instant
+            instant = record.instant
         )
-    }.toSet()
+    }
 
     private fun offsetFactor(currency: Currency) = BigDecimal(10).pow(currency.defaultFractionDigits)
 }

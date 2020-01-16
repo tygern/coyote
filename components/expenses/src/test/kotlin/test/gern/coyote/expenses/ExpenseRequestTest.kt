@@ -1,16 +1,16 @@
 package test.gern.coyote.expenses
 
 import io.ktor.locations.KtorExperimentalLocationsAPI
-import org.gern.coyote.expenses.ExpensePath
+import org.gern.coyote.expenses.ExpensesPath
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @KtorExperimentalLocationsAPI
-class ExpensePathTest {
+class ExpensesPathTest {
     @Test
     fun validWhenAllInfoPresent() {
-        assertTrue(ExpensePath(
+        assertTrue(ExpensesPath(
             currency = "USD",
             amount = 89.56,
             instant = 1234
@@ -19,7 +19,7 @@ class ExpensePathTest {
 
     @Test
     fun notValidWhenMissingCurrency() {
-        assertFalse(ExpensePath(
+        assertFalse(ExpensesPath(
             amount = 89.56,
             instant = 1234
         ).valid)
@@ -27,7 +27,7 @@ class ExpensePathTest {
 
     @Test
     fun notValidWhenInvalidCurrency() {
-        assertFalse(ExpensePath(
+        assertFalse(ExpensesPath(
             currency = "TTT",
             amount = 89.56,
             instant = 1234
@@ -36,7 +36,7 @@ class ExpensePathTest {
 
     @Test
     fun notValidWhenMissingAmount() {
-        assertFalse(ExpensePath(
+        assertFalse(ExpensesPath(
             currency = "USD",
             instant = 1234
         ).valid)
@@ -44,7 +44,7 @@ class ExpensePathTest {
 
     @Test
     fun notValidWhenMissingInstant() {
-        assertFalse(ExpensePath(
+        assertFalse(ExpensesPath(
             currency = "USD",
             amount = 89.56
         ).valid)

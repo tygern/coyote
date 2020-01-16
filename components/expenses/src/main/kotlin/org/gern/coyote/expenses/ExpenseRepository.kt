@@ -1,9 +1,7 @@
 package org.gern.coyote.expenses
 
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigInteger
 import java.time.Instant
@@ -25,14 +23,28 @@ class ExpenseRepository(private val db: Database) {
         }
     }
 
-    fun list() = transaction(db) { ExpensesTable.selectAll().map {
-        ExpenseRecord(
+    fun find(id: UUID): ExpenseRecord? = transaction(db) {
+        ExpensesTable
+            .select { ExpensesTable.id eq id }
+            .singleOrNull()
+            ?.let(::rowToExpenseRecord)
+    }
+
+    fun list() = transaction(db) {
+        ExpensesTable
+            .selectAll()
+            .map(::rowToExpenseRecord)
+            .toSet()
+    }
+
+    private fun rowToExpenseRecord(it: ResultRow): ExpenseRecord {
+        return ExpenseRecord(
             id = it[ExpensesTable.id].value,
             amount = BigInteger.valueOf(it[ExpensesTable.amount]),
             currencyCode = it[ExpensesTable.currencyCode],
             instant = Instant.ofEpochSecond(it[ExpensesTable.instant])
         )
-    } }.toSet()
+    }
 }
 
 private object ExpensesTable : UUIDTable() {

@@ -15,6 +15,7 @@ import java.time.Instant
 import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ExpenseServiceTest {
     private val repo = mockk<ExpenseRepository>()
@@ -66,6 +67,33 @@ class ExpenseServiceTest {
             currency = Currency.getInstance("EUR"),
             instant = Instant.ofEpochSecond(1235)
         ), result)
+    }
+
+    @Test
+    fun testFind() {
+        every {
+            repo.find(UUID.fromString("ce5cf31d-c466-4ad6-b765-711e0750d2c9"))
+        } returns
+            ExpenseRecord(
+                id = UUID.fromString("ce5cf31d-c466-4ad6-b765-711e0750d2c9"),
+                amount = BigInteger.valueOf(3467L),
+                currencyCode = "EUR",
+                instant = Instant.ofEpochSecond(1235)
+            )
+
+        val result = service.find("ce5cf31d-c466-4ad6-b765-711e0750d2c9")
+
+        assertEquals(Expense(
+            id = UUID.fromString("ce5cf31d-c466-4ad6-b765-711e0750d2c9"),
+            amount = BigDecimal.valueOf(34.67),
+            currency = Currency.getInstance("EUR"),
+            instant = Instant.ofEpochSecond(1235)
+        ), result)
+    }
+
+    @Test
+    fun testFindBadUUID() {
+        assertNull(service.find("potato"))
     }
 
     @Test

@@ -7,6 +7,7 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 import kotlin.test.*
 
 @KtorExperimentalLocationsAPI
@@ -67,6 +68,31 @@ class ExpensesApiTest {
     }
 
     @Test
+    fun findExpense() = testApp {
+        val id = createExpense()
+
+        handleRequest(HttpMethod.Get, "/expenses/${id}").apply {
+            assertEquals(HttpStatusCode.OK.value, response.status()?.value)
+
+            val expense = mapper.readTree(response.content!!)
+
+            assertEquals(id, expense["id"].asText())
+            assertEquals("USD", expense["currency"].asText())
+            assertEquals(43.67, expense["amount"].asDouble())
+            assertEquals(1575132000L, expense["instant"].asLong())
+        }
+    }
+
+    @Test
+    fun findExpenseNotFound() = testApp {
+        val id = UUID.randomUUID().toString()
+
+        val result = handleRequest(HttpMethod.Get, "/expenses/${id}")
+
+        assertEquals(HttpStatusCode.NotFound.value, result.response.status()?.value)
+    }
+
+    @Test
     fun testListExpense() = testApp {
         postRequest("/expenses", expenseData)
             .apply { assertEquals(201, response.status()?.value) }
@@ -83,6 +109,14 @@ class ExpensesApiTest {
             assertEquals(43.67, expense["amount"].asDouble())
             assertEquals(1575132000L, expense["instant"].asLong())
         }
+    }
+
+    private fun TestApplicationEngine.createExpense(): String {
+        val createResponse = postRequest("/expenses", expenseData)
+            .apply { assertEquals(201, response.status()?.value) }
+            .response
+
+        return mapper.readTree(createResponse.content!!)["id"].asText()!!
     }
 
     private fun TestApplicationEngine.postRequest(location: String, body: Map<String, Any>) =

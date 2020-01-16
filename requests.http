@@ -28,3 +28,8 @@ GET http://localhost:8080/expenses
 Accept: application/json
 
 ###
+
+GET http://localhost:8080/expenses/e285977f-3ae9-4417-be4a-42e234ac0a41
+Accept: application/json
+
+###
